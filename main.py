@@ -27,17 +27,17 @@ def exiftool(path):
     print("_______________________________________\n")
 
 def stegsnow(path):
-    ch = int(input("Type 1 for encryption and 2 for decryption: "))
-    newpath = "newfoo.txt"
-    if ch == 1:     
-        m = input("input string to be concealed: ")
-        p = input("input password: ")
-        cmd = " -C -m " + '"' + m +'"' + " -p " + '"' + p + '"' + " " + path + " " + newpath
-        print(cmd)
-    elif ch == 2:
-        p = input("input password")
-        cmd = " -C -p" + p + " " +  newpath
-        print(cmd)
+    print("STEGSNOW\n")
+    # ch = int(input("Type 1 for encryption and 2 for decryption: "))
+    # newpath = "newfoo.txt"
+    # if ch == 1:     
+    #     m = input("input string to be concealed: ")
+    #     p = input("input password: ")
+    #     cmd = " -C -m " + '"' + m +'"' + " -p " + '"' + p + '"' + " " + path + " " + newpath
+    #     print(cmd)
+    # elif ch == 2:
+    p = input("Password: ")
+    cmd = " -C -p" + p + " " +  path
     output = os.system("stegsnow" + cmd)
 
 def pngSteg(path):
@@ -45,7 +45,6 @@ def pngSteg(path):
 
 def jpgSteg(path):
     pass
-
 
 def txtSteg(path):
     stegsnow(path)
@@ -58,21 +57,25 @@ def audioSteg(path):
     pass
 
 def main():
-    # print(banner)
+    print(banner)
 
     while True:
         # inpFilePath = str(input('Image path: '))
         inpFilePath = str(tempPath)
-
+        
         if inpFilePath.endswith('.png'):
+            print("Input file path: " + inpFilePath + "\n")
             imageSteg(inpFilePath)
             pngSteg(inpFilePath)
         elif inpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+            print("Input file path: " + inpFilePath + "\n")
             imageSteg(inpFilePath)
             jpgSteg(inpFilePath)
         elif inpFilePath.endswith('.txt'):
+            print("Input file path: " + inpFilePath + "\n")
             txtSteg(inpFilePath)    
         elif inpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3')  or inpFilePath.endswith('.mp3'):
+            print("Input file path: " + inpFilePath + "\n")
             audioSteg(inpFilePath)
         else:
             print("Please enter a valid file path!")
