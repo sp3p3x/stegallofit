@@ -28,17 +28,11 @@ def exiftool(path):
 
 def stegsnow(path):
     print("STEGSNOW\n")
-    # ch = int(input("Type 1 for encryption and 2 for decryption: "))
-    # newpath = "newfoo.txt"
-    # if ch == 1:     
-    #     m = input("input string to be concealed: ")
-    #     p = input("input password: ")
-    #     cmd = " -C -m " + '"' + m +'"' + " -p " + '"' + p + '"' + " " + path + " " + newpath
-    #     print(cmd)
-    # elif ch == 2:
     p = input("Password: ")
     cmd = " -C -p" + p + " " +  path
     output = os.system("stegsnow" + cmd)
+    print(output)
+    print("_______________________________________\n")
 
 def pngSteg(path):
     pass
