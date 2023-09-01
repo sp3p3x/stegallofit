@@ -1,4 +1,17 @@
 import os, subprocess
+import tkinter as tk
+from tkinter import *
+from tkinter import filedialog
+from tk_functions import CreateToolTip
+from tkinterdnd2 import TkinterDnD, DND_FILES
+
+colours=["#2A2F32","#0D8ABF","#02C39A"]
+
+window=TkinterDnD.Tk()
+window.geometry("600x600")
+window.title("ATTENDANCE MANAGEMENT")
+window.configure(bg=colours[0])
+window.resizable(height=0, width=0)
 
 tempPath = "foo.txt"
 
