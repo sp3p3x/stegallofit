@@ -4,8 +4,6 @@ from tkinter import *
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
-tempPath = "foo.txt"
-
 banner = '''
 ███████╗████████╗███████╗ ██████╗  █████╗ ██╗     ██╗      ██████╗ ███████╗██╗████████╗
 ██╔════╝╚══██╔══╝██╔════╝██╔════╝ ██╔══██╗██║     ██║     ██╔═══██╗██╔════╝██║╚══██╔══╝
@@ -41,19 +39,18 @@ class CreateToolTip(object):
 
 class Steg():
 
-    def binwalk(path):
+    def binwalk(self, path):
         print("\nBINWALK")
         output = os.system("binwalk " + path)
-        print(output)
-        print("_______________________________________\n")
+        return output
 
-    def exiftool(path):
+    def exiftool(self, path):
         print("EXIFTOOL \n")
         output = os.system("exiftool " + path)
         print(output)
         print("_______________________________________\n")
 
-    def stegsnow(path):
+    def stegsnow(self, path):
         print("STEGSNOW\n")
         p = input("Password: ")
         cmd = " -C -p" + p + " " +  path
@@ -61,25 +58,25 @@ class Steg():
         print(output)
         print("_______________________________________\n")
 
-    def pngSteg(path):
+    def pngSteg(self, path):
         pass
 
-    def jpgSteg(path):
+    def jpgSteg(self, path):
         pass
 
-    def txtSteg(path):
-        stegsnow(path)
+    def txtSteg(self, path):
+        self.stegsnow(path)
 
-    def imageSteg(path):
-        binwalk(path)
-        exiftool(path)
+    def imageSteg(self, path):
+        self.binwalk(path)
+        self.exiftool(path)
 
-    def audioSteg(path):
+    def audioSteg(self, path):
         pass
 
 class UI():
 
-    colours=["#2A2F32","#0D8ABF","#02C39A"]
+    colours=["#1E2233","#36827F","#F9DB6D"]
 
     def __init__(self):
         self.window=TkinterDnD.Tk()
@@ -93,8 +90,38 @@ class UI():
         def dnd_listbox(event):
             listb.insert("end", event.data)
 
-        listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=70, borderwidth=5)
+        def choose_file():
+            self.window.filename = filedialog.askopenfilename(initialdir="Documents", title="Select file", filetypes=[("select png files","*.png")])
+            listb.insert("end", self.window.filename)
+        
+        def classify():
+            try:
+                inpFilePath = listb.get(listb.curselection())
+                print(inpFilePath)
+                steg = Steg()
+                if inpFilePath.endswith('.png'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.imageSteg(inpFilePath)
+                    steg.pngSteg(inpFilePath)
+                elif inpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.imageSteg(inpFilePath)
+                    steg.jpgSteg(inpFilePath)
+                elif inpFilePath.endswith('.txt'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.txtSteg(inpFilePath)    
+                elif inpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.audioSteg(inpFilePath)
+                else:
+                    print("Please enter a valid file path!")
+            except Exception as err:
+                print(err)
 
+        listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=55, borderwidth=5)
+
+        choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        next_button=tk.Button(self.window,command=lambda: classify(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
         DnD_icon=tk.Label(self.window, bg=self.colours[0])
         DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
         DnD_icon.drop_target_register(DND_FILES)
@@ -102,42 +129,21 @@ class UI():
         DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
         listb.dnd_bind("<<Drop>>", dnd_listbox)
 
+        CreateToolTip(DnD_label,"Drop the files here!")
+
+        choose_file_button.place(x=230, y=460)
         listb.place(x=50, y=90)
         DnD_icon.place(x=252, y=210)
         DnD_label.place(x=250, y=300)
-
+        next_button.place(x=240, y=530)
+        
     def run(self):
         self.mainUI()
         self.window.mainloop()
 
 def main():
-    print(banner)
-
-    while True:
-        # inpFilePath = str(input('Image path: '))
-        inpFilePath = str(tempPath)
-        
-        if inpFilePath.endswith('.png'):
-            print("Input file path: " + inpFilePath + "\n")
-            Steg.imageSteg(inpFilePath)
-            Steg.pngSteg(inpFilePath)
-        elif inpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
-            print("Input file path: " + inpFilePath + "\n")
-            Steg.imageSteg(inpFilePath)
-            Steg.jpgSteg(inpFilePath)
-        elif inpFilePath.endswith('.txt'):
-            print("Input file path: " + inpFilePath + "\n")
-            Steg.txtSteg(inpFilePath)    
-        elif inpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3')  or inpFilePath.endswith('.mp3'):
-            print("Input file path: " + inpFilePath + "\n")
-            Steg.audioSteg(inpFilePath)
-        else:
-            print("Please enter a valid file path!")
-            continue
-
-        break
-
-
-if __name__ == "__main__":
     ui = UI()
     ui.run()
+
+if __name__ == "__main__":
+    main()
