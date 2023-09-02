@@ -90,13 +90,13 @@ class UI():
 
     def mainUI(self):    
 
-        def dnd_listbox(self, event):
-            self.listb.insert("end", event.data)
+        def dnd_listbox(event):
+            listb.insert("end", event.data)
 
         listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=70, borderwidth=5)
 
         DnD_icon=tk.Label(self.window, bg=self.colours[0])
-        DnD_label=tk.Label(self.window, text="DROP THE CSV FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
+        DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
         DnD_icon.drop_target_register(DND_FILES)
         listb.drop_target_register(DND_FILES)
         DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
