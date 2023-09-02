@@ -2,7 +2,6 @@ import os, subprocess
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
-from tkToolTip import CreateToolTip
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
 tempPath = "foo.txt"
