@@ -9,7 +9,7 @@ colours=["#2A2F32","#0D8ABF","#02C39A"]
 
 window=TkinterDnD.Tk()
 window.geometry("600x600")
-window.title("ATTENDANCE MANAGEMENT")
+window.title("stegallofit")
 window.configure(bg=colours[0])
 window.resizable(height=0, width=0)
 
@@ -62,6 +62,24 @@ def imageSteg(path):
 
 def audioSteg(path):
     pass
+
+def dnd_listbox(event):
+    listb.insert("end", event.data)
+
+listb=tk.Listbox(window, selectmode=tk.SINGLE, bg=colours[0], fg=colours[2], font=("Roboto" , 10, 'bold'), height=23, width=70, borderwidth=5)
+
+DnD_icon=tk.Label(window, bg=colours[0])
+DnD_label=tk.Label(window, text="DROP THE CSV FILE",font=("Roboto" , 8, 'bold'), bg=colours[0], fg=colours[1])
+DnD_icon.drop_target_register(DND_FILES)
+listb.drop_target_register(DND_FILES)
+DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
+listb.dnd_bind("<<Drop>>", dnd_listbox)
+
+listb.place(x=50, y=90)
+DnD_icon.place(x=252, y=210)
+DnD_label.place(x=250, y=300)
+
+window.mainloop()
 
 def main():
     print(banner)
