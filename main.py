@@ -120,7 +120,22 @@ class UI():
 
         listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=55, borderwidth=5)
 
+        def clear():
+            selection = listb.curselection()
+            try:
+                listb.delete(selection)
+            except:
+                pass
+
+        def clearAll():
+            list_size=listb.size()
+            listb.delete(0, list_size)
+
+        banner_label=tk.Label(self.window, text="STEGALLOFIT",font=("Roboto" , 30, 'bold'), bg=self.colours[0], fg=self.colours[2])
+        credits_label=tk.Label(self.window, text="Developed and maintained by @sp3p3x @ask",font=("Roboto" , 9, 'bold'), bg=self.colours[0], fg=self.colours[2])
         choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         next_button=tk.Button(self.window,command=lambda: classify(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
         DnD_icon=tk.Label(self.window, bg=self.colours[0])
         DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
@@ -131,7 +146,11 @@ class UI():
 
         CreateToolTip(DnD_label,"Drop the files here!")
 
-        choose_file_button.place(x=230, y=460)
+        banner_label.place(x=150, y=10)
+        credits_label.place(x=147, y=55)
+        choose_file_button.place(x=80, y=460)
+        clear_button.place(x=220, y=460)
+        clear_all_button.place(x=300, y=460)
         listb.place(x=50, y=90)
         DnD_icon.place(x=252, y=210)
         DnD_label.place(x=250, y=300)
