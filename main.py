@@ -96,21 +96,21 @@ class UI():
         
         def classify():
             try:
-                inpFilePath = listb.get(listb.curselection())
-                print(inpFilePath)
+                rawInpFilePath = listb.get(listb.curselection()).rstrip('}').lstrip('{')
+                inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
                 steg = Steg()
-                if inpFilePath.endswith('.png'):
+                if rawInpFilePath.endswith('.png'):
                     print("Input file path: " + inpFilePath + "\n")
                     steg.imageSteg(inpFilePath)
                     steg.pngSteg(inpFilePath)
-                elif inpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+                elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
                     print("Input file path: " + inpFilePath + "\n")
                     steg.imageSteg(inpFilePath)
                     steg.jpgSteg(inpFilePath)
-                elif inpFilePath.endswith('.txt'):
+                elif rawInpFilePath.endswith('.txt'):
                     print("Input file path: " + inpFilePath + "\n")
                     steg.txtSteg(inpFilePath)    
-                elif inpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
+                elif rawInpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
                     print("Input file path: " + inpFilePath + "\n")
                     steg.audioSteg(inpFilePath)
                 else:
