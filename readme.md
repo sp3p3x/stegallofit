@@ -9,14 +9,14 @@ A GUI tool that makes steg analysis easy by putting all the tools in one place.
 ```
 binwalk
 exiftool
-
+strings
 stegsnow
 ```
 
 **Tools to add:**
 
 ```
-strings
+objdumb
 zsteg
 jsteg
 steghide
