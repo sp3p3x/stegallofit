@@ -11,6 +11,7 @@ binwalk
 exiftool
 strings
 stegsnow
+pngcheck
 ```
 
 **Tools to add:**
@@ -22,7 +23,6 @@ jsteg
 steghide
 stegseek
 foremost
-pngcheck
 stegdetect
 stegsolve
 stegoveritas
