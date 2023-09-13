@@ -66,6 +66,13 @@ class Steg():
         print("_______________________________________\n")
 
 
+    def pngcheck(self,path):
+        print("PNGCHECK \n")
+        output = os.system("pngcheck -v " + path)
+        print(output)
+        print("_______________________________________\n")
+
+
     def pngSteg(self, path):
         pass
 
@@ -79,6 +86,7 @@ class Steg():
         self.binwalk(path)
         self.exiftool(path)
         self.strings(path)
+        self.pngcheck(path)
 
     def audioSteg(self, path):
         pass
