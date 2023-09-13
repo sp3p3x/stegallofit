@@ -72,6 +72,11 @@ class Steg():
         print(output)
         print("_______________________________________\n")
 
+    def jsteg(self,path):
+        print("JSTEG \n")
+        output = os.system("jsteg -reveal " + path + " output")
+        print(output)
+        print("_______________________________________\n")
 
     def pngSteg(self, path):
         pass
