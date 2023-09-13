@@ -58,6 +58,14 @@ class Steg():
         print(output)
         print("_______________________________________\n")
 
+
+    def strings(self, path):
+        print("STRINGS \n")
+        output = os.system("strings " + path)
+        print(output)
+        print("_______________________________________\n")
+
+
     def pngSteg(self, path):
         pass
 
@@ -70,6 +78,7 @@ class Steg():
     def imageSteg(self, path):
         self.binwalk(path)
         self.exiftool(path)
+        self.strings(path)
 
     def audioSteg(self, path):
         pass
