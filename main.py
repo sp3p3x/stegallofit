@@ -40,8 +40,12 @@ class CreateToolTip(object):
 class Steg():
 
     def binwalk(self, path):
-        print("\nBINWALK")
-        output = os.system("binwalk " + path)
+        cmnd = "binwalk "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
         return output
 
     def exiftool(self, path):
@@ -58,13 +62,11 @@ class Steg():
         print(output)
         print("_______________________________________\n")
 
-
     def strings(self, path):
         print("STRINGS \n")
         output = os.system("strings " + path)
         print(output)
         print("_______________________________________\n")
-
 
     def pngcheck(self,path):
         print("PNGCHECK \n")
@@ -88,10 +90,15 @@ class Steg():
         self.stegsnow(path)
 
     def imageSteg(self, path):
-        self.binwalk(path)
+        binwalkOut = self.binwalk(path)
         self.exiftool(path)
         self.strings(path)
         self.pngcheck(path)
+
+        out = [binwalkOut]
+        print(binwalkOut)
+
+        return out
 
     def audioSteg(self, path):
         pass
@@ -107,7 +114,18 @@ class UI():
         self.window.configure(bg=self.colours[0])
         self.window.resizable(height=0, width=0)
 
-    def mainUI(self):    
+    def mainUI(self):
+
+        def destroy():
+            banner_label.place_forget()
+            credits_label.place_forget()
+            choose_file_button.place_forget()
+            clear_button.place_forget()
+            clear_all_button.place_forget()
+            listb.place_forget()
+            DnD_icon.place_forget()
+            DnD_label.place_forget()
+            next_button.place_forget()
 
         def dnd_listbox(event):
             listb.insert("end", event.data)
@@ -116,27 +134,12 @@ class UI():
             self.window.filename = filedialog.askopenfilename(initialdir="Documents", title="Select file", filetypes=[("select png files","*.png")])
             listb.insert("end", self.window.filename)
         
-        def classify():
+        def nextUI():
+            destroy()
             try:
                 rawInpFilePath = listb.get(listb.curselection()).rstrip('}').lstrip('{')
                 inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
-                steg = Steg()
-                if rawInpFilePath.endswith('.png'):
-                    print("Input file path: " + inpFilePath + "\n")
-                    steg.imageSteg(inpFilePath)
-                    steg.pngSteg(inpFilePath)
-                elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
-                    print("Input file path: " + inpFilePath + "\n")
-                    steg.imageSteg(inpFilePath)
-                    steg.jpgSteg(inpFilePath)
-                elif rawInpFilePath.endswith('.txt'):
-                    print("Input file path: " + inpFilePath + "\n")
-                    steg.txtSteg(inpFilePath)    
-                elif rawInpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
-                    print("Input file path: " + inpFilePath + "\n")
-                    steg.audioSteg(inpFilePath)
-                else:
-                    print("Please enter a valid file path!")
+                self.ouputUI(rawInpFilePath, inpFilePath)
             except Exception as err:
                 print(err)
 
@@ -158,7 +161,7 @@ class UI():
         choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
-        next_button=tk.Button(self.window,command=lambda: classify(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
+        next_button=tk.Button(self.window,command=lambda: nextUI(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
         DnD_icon=tk.Label(self.window, bg=self.colours[0])
         DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
         DnD_icon.drop_target_register(DND_FILES)
@@ -177,7 +180,45 @@ class UI():
         DnD_icon.place(x=252, y=210)
         DnD_label.place(x=250, y=300)
         next_button.place(x=240, y=530)
-        
+
+    def ouputUI(self, rawInpFilePath, inpFilePath):
+
+        def modifyText(newText):
+            outputBox.config(state=NORMAL)
+            outputBox.insert(END, newText)
+            outputBox.config(state=DISABLED)
+
+        def classify():
+            try:
+                steg = Steg()
+                if rawInpFilePath.endswith('.png'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    imageOut = steg.imageSteg(inpFilePath)
+                    steg.pngSteg(inpFilePath)
+                    modifyText(imageOut[0])
+                    print(imageOut[0])
+                elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.imageSteg(inpFilePath)
+                    steg.jpgSteg(inpFilePath)
+                elif rawInpFilePath.endswith('.txt'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.txtSteg(inpFilePath)    
+                elif rawInpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
+                    print("Input file path: " + inpFilePath + "\n")
+                    steg.audioSteg(inpFilePath)
+                else:
+                    print("Please enter a valid file path!")
+            except Exception as err:
+                print(err)
+
+        outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
+
+        classify()
+
+        outputBox.place(x=16, y=100)
+
+
     def run(self):
         self.mainUI()
         self.window.mainloop()
