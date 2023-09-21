@@ -41,7 +41,7 @@ class Steg():
 
     def binwalk(self, path):
         cmnd = "binwalk "+path
-        process = subprocess.run([cmnd], capture_output=True, text=True)
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
         else:
