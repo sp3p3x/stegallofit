@@ -116,6 +116,13 @@ class Steg():
     def audioSteg(self, path):
         pass
 
+    def genericSteg(self, path):
+        stringsOut = self.strings(path)
+
+        out = [stringsOut]
+
+        return out
+
 class UI():
 
     colours=["#1E2233","#36827F","#F9DB6D"]
@@ -150,9 +157,8 @@ class UI():
         def nextUI():
             destroy()
             try:
-                rawInpFilePath = listb.get(listb.curselection()).rstrip('}').lstrip('{')
                 inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
-                self.ouputUI(rawInpFilePath, inpFilePath)
+                self.ouputUI(inpFilePath)
             except Exception as err:
                 if DEBUG:
                     print(err)
@@ -195,7 +201,7 @@ class UI():
         DnD_label.place(x=250, y=300)
         next_button.place(x=240, y=530)
 
-    def ouputUI(self, rawInpFilePath, inpFilePath):
+    def ouputUI(self, inpFilePath):
 
         def modifyText(newText):
             outputBox.config(state=NORMAL)
@@ -205,28 +211,29 @@ class UI():
         def classify():
             try:
                 steg = Steg()
-                if rawInpFilePath.endswith('.png'):
+                if inpFilePath.rstrip('"').endswith('.png'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
                     imageOut = steg.imageSteg(inpFilePath)
                     steg.pngSteg(inpFilePath)
                     modifyText(imageOut[0])
-                elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+                elif inpFilePath.rstrip('"').endswith('.jpg') or inpFilePath.endswith('.jpeg'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
                     steg.imageSteg(inpFilePath)
                     steg.jpgSteg(inpFilePath)
-                elif rawInpFilePath.endswith('.txt'):
+                elif inpFilePath.rstrip('"').endswith('.txt'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
                     steg.txtSteg(inpFilePath)    
-                elif rawInpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
+                elif inpFilePath.rstrip('"').endswith('.wav') or inpFilePath.endswith('.mp3'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
                     steg.audioSteg(inpFilePath)
                 else:
                     if DEBUG:
-                        print("Please enter a valid file path!")
+                        print("Input file path: " + inpFilePath + "\n")
+                    steg.genericSteg(inpFilePath)
             except Exception as err:
                 if DEBUG:
                     print(err)
