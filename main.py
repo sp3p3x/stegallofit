@@ -4,6 +4,8 @@ from tkinter import *
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
+DEBUG = False
+
 banner = '''
 ███████╗████████╗███████╗ ██████╗  █████╗ ██╗     ██╗      ██████╗ ███████╗██╗████████╗
 ██╔════╝╚══██╔══╝██╔════╝██╔════╝ ██╔══██╗██║     ██║     ██╔═══██╗██╔════╝██║╚══██╔══╝
@@ -152,7 +154,8 @@ class UI():
                 inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
                 self.ouputUI(rawInpFilePath, inpFilePath)
             except Exception as err:
-                print(err)
+                if DEBUG:
+                    print(err)
 
         listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=55, borderwidth=5)
 
@@ -203,24 +206,30 @@ class UI():
             try:
                 steg = Steg()
                 if rawInpFilePath.endswith('.png'):
-                    print("Input file path: " + inpFilePath + "\n")
+                    if DEBUG:
+                        print("Input file path: " + inpFilePath + "\n")
                     imageOut = steg.imageSteg(inpFilePath)
                     steg.pngSteg(inpFilePath)
                     modifyText(imageOut[0])
                 elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
-                    print("Input file path: " + inpFilePath + "\n")
+                    if DEBUG:
+                        print("Input file path: " + inpFilePath + "\n")
                     steg.imageSteg(inpFilePath)
                     steg.jpgSteg(inpFilePath)
                 elif rawInpFilePath.endswith('.txt'):
-                    print("Input file path: " + inpFilePath + "\n")
+                    if DEBUG:
+                        print("Input file path: " + inpFilePath + "\n")
                     steg.txtSteg(inpFilePath)    
                 elif rawInpFilePath.endswith('.wav') or inpFilePath.endswith('.mp3'):
-                    print("Input file path: " + inpFilePath + "\n")
+                    if DEBUG:
+                        print("Input file path: " + inpFilePath + "\n")
                     steg.audioSteg(inpFilePath)
                 else:
-                    print("Please enter a valid file path!")
+                    if DEBUG:
+                        print("Please enter a valid file path!")
             except Exception as err:
-                print(err)
+                if DEBUG:
+                    print(err)
 
         outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
 
