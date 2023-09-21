@@ -9,20 +9,20 @@ A GUI tool that makes steg analysis easy by putting all the tools in one place.
 ```
 binwalk
 exiftool
-
+strings
 stegsnow
+pngcheck
 ```
 
 **Tools to add:**
 
 ```
-strings
+objdumb
 zsteg
 jsteg
 steghide
 stegseek
 foremost
-pngcheck
 stegdetect
 stegsolve
 stegoveritas

@@ -58,6 +58,26 @@ class Steg():
         print(output)
         print("_______________________________________\n")
 
+
+    def strings(self, path):
+        print("STRINGS \n")
+        output = os.system("strings " + path)
+        print(output)
+        print("_______________________________________\n")
+
+
+    def pngcheck(self,path):
+        print("PNGCHECK \n")
+        output = os.system("pngcheck -v " + path)
+        print(output)
+        print("_______________________________________\n")
+
+    def jsteg(self,path):
+        print("JSTEG \n")
+        output = os.system("jsteg -reveal " + path + " output")
+        print(output)
+        print("_______________________________________\n")
+
     def pngSteg(self, path):
         pass
 
@@ -70,6 +90,8 @@ class Steg():
     def imageSteg(self, path):
         self.binwalk(path)
         self.exiftool(path)
+        self.strings(path)
+        self.pngcheck(path)
 
     def audioSteg(self, path):
         pass
