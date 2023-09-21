@@ -49,10 +49,13 @@ class Steg():
         return output
 
     def exiftool(self, path):
-        print("EXIFTOOL \n")
-        output = os.system("exiftool " + path)
-        print(output)
-        print("_______________________________________\n")
+        cmnd = "exiftool "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def stegsnow(self, path):
         print("STEGSNOW\n")
@@ -63,22 +66,31 @@ class Steg():
         print("_______________________________________\n")
 
     def strings(self, path):
-        print("STRINGS \n")
-        output = os.system("strings " + path)
-        print(output)
-        print("_______________________________________\n")
+        cmnd = "strings "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def pngcheck(self,path):
-        print("PNGCHECK \n")
-        output = os.system("pngcheck -v " + path)
-        print(output)
-        print("_______________________________________\n")
+        cmnd = "pngcheck -v "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def jsteg(self,path):
-        print("JSTEG \n")
-        output = os.system("jsteg -reveal " + path + " output")
-        print(output)
-        print("_______________________________________\n")
+        cmnd = "jsteg -reveal " + path + " output"
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def pngSteg(self, path):
         pass
@@ -91,12 +103,11 @@ class Steg():
 
     def imageSteg(self, path):
         binwalkOut = self.binwalk(path)
-        self.exiftool(path)
-        self.strings(path)
-        self.pngcheck(path)
+        exiftoolOut = self.exiftool(path)
+        stringsOut = self.strings(path)
+        pngcheckOut = self.pngcheck(path)
 
-        out = [binwalkOut]
-        print(binwalkOut)
+        out = [binwalkOut, exiftoolOut, stringsOut, pngcheckOut]
 
         return out
 
@@ -196,7 +207,6 @@ class UI():
                     imageOut = steg.imageSteg(inpFilePath)
                     steg.pngSteg(inpFilePath)
                     modifyText(imageOut[0])
-                    print(imageOut[0])
                 elif rawInpFilePath.endswith('.jpg') or inpFilePath.endswith('.jpeg'):
                     print("Input file path: " + inpFilePath + "\n")
                     steg.imageSteg(inpFilePath)
@@ -214,9 +224,9 @@ class UI():
 
         outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
 
-        classify()
-
         outputBox.place(x=16, y=100)
+
+        classify()
 
 
     def run(self):
