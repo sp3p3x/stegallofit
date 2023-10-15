@@ -1,6 +1,7 @@
 import os, subprocess
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
 from tkinter import filedialog
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
@@ -108,8 +109,7 @@ class Steg():
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
         pngcheckOut = self.pngcheck(path)
-
-        out = [binwalkOut, exiftoolOut, stringsOut, pngcheckOut]
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
 
         return out
 
@@ -143,7 +143,7 @@ class UI():
             clear_button.place_forget()
             clear_all_button.place_forget()
             listb.place_forget()
-            DnD_icon.place_forget()
+            # DnD_icon.place_forget()
             DnD_label.place_forget()
             next_button.place_forget()
 
@@ -182,12 +182,13 @@ class UI():
         clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         next_button=tk.Button(self.window,command=lambda: nextUI(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
-        DnD_icon=tk.Label(self.window, bg=self.colours[0])
+        # DnD_icon=tk.Label(self.window, bg=self.colours[0])
         DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
-        DnD_icon.drop_target_register(DND_FILES)
+        # DnD_icon.drop_target_register(DND_FILES)
         listb.drop_target_register(DND_FILES)
-        DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
+        # DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
         listb.dnd_bind("<<Drop>>", dnd_listbox)
+        # todo: add dnd hook to label
 
         CreateToolTip(DnD_label,"Drop the files here!")
 
@@ -197,7 +198,7 @@ class UI():
         clear_button.place(x=220, y=460)
         clear_all_button.place(x=300, y=460)
         listb.place(x=50, y=90)
-        DnD_icon.place(x=252, y=210)
+        # DnD_icon.place(x=252, y=210)
         DnD_label.place(x=250, y=300)
         next_button.place(x=240, y=530)
 
@@ -205,6 +206,7 @@ class UI():
 
         def modifyText(newText):
             outputBox.config(state=NORMAL)
+            outputBox.delete('1.0',END)
             outputBox.insert(END, newText)
             outputBox.config(state=DISABLED)
 
@@ -214,9 +216,8 @@ class UI():
                 if inpFilePath.rstrip('"').endswith('.png'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    imageOut = steg.imageSteg(inpFilePath)
+                    outData = steg.imageSteg(inpFilePath)
                     steg.pngSteg(inpFilePath)
-                    modifyText(imageOut[0])
                 elif inpFilePath.rstrip('"').endswith('.jpg') or inpFilePath.endswith('.jpeg'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
@@ -234,19 +235,45 @@ class UI():
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
                     steg.genericSteg(inpFilePath)
+
+                return outData
+
             except Exception as err:
                 if DEBUG:
                     print(err)
 
-        outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
+        outData = classify()
+        outDataKeys = list(outData.keys())
 
+        def initOut():
+            modifyText(list(outData.values())[0])
+
+        def change_dropdown(*args):
+            toolName = selectedTool.get()
+            modifyText(outData[toolName])
+
+        outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
         outputBox.place(x=16, y=100)
 
-        classify()
+        selectedTool = StringVar(self.window)
+        selectedTool.set(outDataKeys[0])
 
+        dropdownStyle = ttk.Style()
+        dropdownStyle.configure('TCombobox', fieldbackground='red', background='red', bg='red')
+
+        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool)
+        toolNameDropdown['values']=outDataKeys
+        toolNameDropdown.configure(foreground=self.colours[1], font=("Roboto" , 12, 'bold'), state="readonly", style="TCombobox")
+        toolNameDropdown.bind("<FocusIn>", lambda e: toolNameDropdown.selection_clear())
+        toolNameDropdown.place(x=100, y=500)
+
+        selectedTool.trace('w', change_dropdown)
+
+        initOut()
 
     def run(self):
-        self.mainUI()
+        # self.mainUI()
+        self.ouputUI('./foo/foo.png')
         self.window.mainloop()
 
 def main():
