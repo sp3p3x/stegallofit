@@ -96,13 +96,29 @@ class Steg():
         return output
 
     def pngSteg(self, path):
-        pass
+        binwalkOut = self.binwalk(path)
+        exiftoolOut = self.exiftool(path)
+        stringsOut = self.strings(path)
+        pngcheckOut = self.pngcheck(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
+
+        return out
 
     def jpgSteg(self, path):
-        pass
+        binwalkOut = self.binwalk(path)
+        exiftoolOut = self.exiftool(path)
+        stringsOut = self.strings(path)
+        pngcheckOut = self.pngcheck(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
+
+        return out
 
     def txtSteg(self, path):
-        self.stegsnow(path)
+        stegsnowOut = self.stegsnow(path)
+
+        out = {"stegsnow":stegsnowOut}
+
+        return out
 
     def imageSteg(self, path):
         binwalkOut = self.binwalk(path)
@@ -119,7 +135,7 @@ class Steg():
     def genericSteg(self, path):
         stringsOut = self.strings(path)
 
-        out = [stringsOut]
+        out = {"strings":stringsOut}
 
         return out
 
@@ -136,16 +152,11 @@ class UI():
 
     def mainUI(self):
 
+        widgets = []
+
         def destroy():
-            banner_label.place_forget()
-            credits_label.place_forget()
-            choose_file_button.place_forget()
-            clear_button.place_forget()
-            clear_all_button.place_forget()
-            listb.place_forget()
-            # DnD_icon.place_forget()
-            DnD_label.place_forget()
-            next_button.place_forget()
+            for widget in widgets:
+                widget.place_forget()
 
         def dnd_listbox(event):
             listb.insert("end", event.data)
@@ -177,32 +188,57 @@ class UI():
             listb.delete(0, list_size)
 
         banner_label=tk.Label(self.window, text="STEGALLOFIT",font=("Roboto" , 30, 'bold'), bg=self.colours[0], fg=self.colours[2])
+        widgets.append(banner_label)
+        banner_label.place(x=150, y=10)
+
         credits_label=tk.Label(self.window, text="Developed and maintained by @sp3p3x @ask",font=("Roboto" , 9, 'bold'), bg=self.colours[0], fg=self.colours[2])
+        widgets.append(credits_label)
+        credits_label.place(x=147, y=55)
+
         choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        widgets.append(choose_file_button)
+        choose_file_button.place(x=80, y=460)
+
         clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        widgets.append(clear_button)
+        clear_button.place(x=220, y=460)
+
         clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        widgets.append(clear_all_button)
+        clear_all_button.place(x=300, y=460)
+
         next_button=tk.Button(self.window,command=lambda: nextUI(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
-        # DnD_icon=tk.Label(self.window, bg=self.colours[0])
+        widgets.append(next_button)
+        next_button.place(x=240, y=530)
+
         DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
+        widgets.append(DnD_label)
+        DnD_label.place(x=250, y=300)
+
+
+        # DnD_icon=tk.Label(self.window, bg=self.colours[0])
+        # DnD_icon.place(x=252, y=210)
+
         # DnD_icon.drop_target_register(DND_FILES)
-        listb.drop_target_register(DND_FILES)
         # DnD_icon.dnd_bind("<<Drop>>", dnd_listbox)
+
+        listb.drop_target_register(DND_FILES)
         listb.dnd_bind("<<Drop>>", dnd_listbox)
+        widgets.append(listb)
+        listb.place(x=50, y=90)
+
         # todo: add dnd hook to label
 
         CreateToolTip(DnD_label,"Drop the files here!")
 
-        banner_label.place(x=150, y=10)
-        credits_label.place(x=147, y=55)
-        choose_file_button.place(x=80, y=460)
-        clear_button.place(x=220, y=460)
-        clear_all_button.place(x=300, y=460)
-        listb.place(x=50, y=90)
-        # DnD_icon.place(x=252, y=210)
-        DnD_label.place(x=250, y=300)
-        next_button.place(x=240, y=530)
 
     def ouputUI(self, inpFilePath):
+
+        widgets = []
+
+        def destroy():
+            for widget in widgets:
+                widget.place_forget()
 
         def modifyText(newText):
             outputBox.config(state=NORMAL)
@@ -216,25 +252,23 @@ class UI():
                 if inpFilePath.rstrip('"').endswith('.png'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    outData = steg.imageSteg(inpFilePath)
-                    steg.pngSteg(inpFilePath)
+                    outData = steg.pngSteg(inpFilePath)
                 elif inpFilePath.rstrip('"').endswith('.jpg') or inpFilePath.endswith('.jpeg'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    steg.imageSteg(inpFilePath)
-                    steg.jpgSteg(inpFilePath)
+                    outData = steg.jpgSteg(inpFilePath)
                 elif inpFilePath.rstrip('"').endswith('.txt'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    steg.txtSteg(inpFilePath)    
+                    outData = steg.txtSteg(inpFilePath)    
                 elif inpFilePath.rstrip('"').endswith('.wav') or inpFilePath.endswith('.mp3'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    steg.audioSteg(inpFilePath)
+                    outData = steg.audioSteg(inpFilePath)
                 else:
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    steg.genericSteg(inpFilePath)
+                    outData = steg.genericSteg(inpFilePath)
 
                 return outData
 
@@ -252,28 +286,28 @@ class UI():
             toolName = selectedTool.get()
             modifyText(outData[toolName])
 
-        outputBox = tk.Text(self.window, state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=22, width=51, font=("Roboto" , 12, 'bold'))
+        outputBox = tk.Text(self.window,  state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=25, width=70, font=("Roboto" , 9, 'bold'))
+        widgets.append(outputBox)
         outputBox.place(x=16, y=100)
 
         selectedTool = StringVar(self.window)
         selectedTool.set(outDataKeys[0])
 
         dropdownStyle = ttk.Style()
-        dropdownStyle.configure('TCombobox', fieldbackground='red', background='red', bg='red')
-
-        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool)
+        dropdownStyle.configure('TCombobox',selectbackground=[('readonly', self.colours[1])])
+        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center')
         toolNameDropdown['values']=outDataKeys
-        toolNameDropdown.configure(foreground=self.colours[1], font=("Roboto" , 12, 'bold'), state="readonly", style="TCombobox")
+        toolNameDropdown.configure(font=("Roboto" , 12, 'bold'), state="readonly")
         toolNameDropdown.bind("<FocusIn>", lambda e: toolNameDropdown.selection_clear())
-        toolNameDropdown.place(x=100, y=500)
+        widgets.append(toolNameDropdown)
+        toolNameDropdown.place(x=170, y=530)
 
         selectedTool.trace('w', change_dropdown)
 
         initOut()
 
     def run(self):
-        # self.mainUI()
-        self.ouputUI('./foo/foo.png')
+        self.mainUI()
         self.window.mainloop()
 
 def main():
