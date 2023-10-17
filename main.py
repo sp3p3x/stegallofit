@@ -282,7 +282,7 @@ class UI():
         def initOut():
             modifyText(list(outData.values())[0])
 
-        def change_dropdown(*args):
+        def changeTool(*args):
             toolName = selectedTool.get()
             modifyText(outData[toolName])
 
@@ -294,20 +294,31 @@ class UI():
         selectedTool.set(outDataKeys[0])
 
         dropdownStyle = ttk.Style()
-        dropdownStyle.configure('TCombobox',selectbackground=[('readonly', self.colours[1])])
-        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center')
+
+        self.window.option_add('*TCombobox*Listbox*Background', self.colours[0])
+        self.window.option_add('*TCombobox*Listbox*Foreground', self.colours[2])
+        self.window.option_add('*TCombobox*Listbox*selectBackground', self.colours[1])
+        self.window.option_add('*TCombobox*Listbox*selectForeground', self.colours[2])
+        dropdownStyle.map('TCombobox', fieldbackground=[('readonly', self.colours[0])])
+        dropdownStyle.map('TCombobox', selectbackground=[('readonly', self.colours[0])])
+        dropdownStyle.map('TCombobox', selectforeground=[('readonly', self.colours[2])])
+        dropdownStyle.map('TCombobox', background=[('readonly', self.colours[0])])
+        dropdownStyle.map('TCombobox', foreground=[('readonly', self.colours[2])])
+
+        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center', )
         toolNameDropdown['values']=outDataKeys
         toolNameDropdown.configure(font=("Roboto" , 12, 'bold'), state="readonly")
-        toolNameDropdown.bind("<FocusIn>", lambda e: toolNameDropdown.selection_clear())
+        toolNameDropdown.bind("<<ComboboxSelected>>", lambda e: toolNameDropdown.selection_clear())
         widgets.append(toolNameDropdown)
         toolNameDropdown.place(x=170, y=530)
 
-        selectedTool.trace('w', change_dropdown)
+
+        selectedTool.trace('w', changeTool)
 
         initOut()
 
     def run(self):
-        self.mainUI()
+        self.ouputUI("foo/foo.png")
         self.window.mainloop()
 
 def main():
