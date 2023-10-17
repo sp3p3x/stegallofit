@@ -164,7 +164,7 @@ class UI():
         def choose_file():
             self.window.filename = filedialog.askopenfilename(initialdir="Documents", title="Select file", filetypes=[("select png files","*.png")])
             listb.insert("end", self.window.filename)
-        
+
         def nextUI():
             destroy()
             try:
@@ -240,6 +240,10 @@ class UI():
             for widget in widgets:
                 widget.place_forget()
 
+        def nextUI():
+            destroy()
+            self.mainUI()
+
         def modifyText(newText):
             outputBox.config(state=NORMAL)
             outputBox.delete('1.0',END)
@@ -277,13 +281,13 @@ class UI():
                     print(err)
 
         outData = classify()
-        outDataKeys = list(outData.keys())
+        outDataKeys = [string.upper() for string in list(outData.keys())]
 
         def initOut():
             modifyText(list(outData.values())[0])
 
         def changeTool(*args):
-            toolName = selectedTool.get()
+            toolName = selectedTool.get().lower()
             modifyText(outData[toolName])
 
         outputBox = tk.Text(self.window,  state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=25, width=70, font=("Roboto" , 9, 'bold'))
@@ -305,17 +309,21 @@ class UI():
         dropdownStyle.map('TCombobox', background=[('readonly', self.colours[0])])
         dropdownStyle.map('TCombobox', foreground=[('readonly', self.colours[2])])
 
-        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center', )
+        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center')
         toolNameDropdown['values']=outDataKeys
         toolNameDropdown.configure(font=("Roboto" , 12, 'bold'), state="readonly")
         toolNameDropdown.bind("<<ComboboxSelected>>", lambda e: toolNameDropdown.selection_clear())
+        
         widgets.append(toolNameDropdown)
         toolNameDropdown.place(x=170, y=530)
-
 
         selectedTool.trace('w', changeTool)
 
         initOut()
+
+        back_button=tk.Button(self.window,command=lambda: nextUI(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="BACK", font=("Roboto" , 10, 'bold'))
+        widgets.append(back_button)
+        back_button.place(x=20, y=30)
 
     def run(self):
         self.ouputUI("foo/foo.png")
