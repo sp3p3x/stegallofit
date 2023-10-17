@@ -167,9 +167,9 @@ class UI():
             listb.insert("end", self.window.filename)
 
         def nextUI():
-            destroy()
             try:
                 inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
+                destroy()
                 self.ouputUI(inpFilePath)
             except Exception as err:
                 if DEBUG:
@@ -198,15 +198,15 @@ class UI():
 
         choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         widgets.append(choose_file_button)
-        choose_file_button.place(x=80, y=460)
+        choose_file_button.place(x=110, y=460)
 
         clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         widgets.append(clear_button)
-        clear_button.place(x=220, y=460)
+        clear_button.place(x=260, y=460)
 
         clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         widgets.append(clear_all_button)
-        clear_all_button.place(x=300, y=460)
+        clear_all_button.place(x=360, y=460)
 
         next_button=tk.Button(self.window,command=lambda: nextUI(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
         widgets.append(next_button)
@@ -328,7 +328,7 @@ class UI():
         back_button.place(x=20, y=30)
 
     def run(self):
-        self.ouputUI("foo/foo.png")
+        self.mainUI()
         self.window.mainloop()
 
 def main():
