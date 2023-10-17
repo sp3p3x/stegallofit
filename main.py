@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+import tkinter.scrolledtext as scrolledtext
 from tkinterdnd2 import TkinterDnD, DND_FILES
 
 DEBUG = False
@@ -290,7 +291,8 @@ class UI():
             toolName = selectedTool.get().lower()
             modifyText(outData[toolName])
 
-        outputBox = tk.Text(self.window,  state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=25, width=70, font=("Roboto" , 9, 'bold'))
+        outputBox = scrolledtext.ScrolledText(self.window,  state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=25, width=66, font=("Roboto" , 9, 'bold'), padx=10, pady=5)
+        outputBox.vbar.config(troughcolor = self.colours[0], background=self.colours[1], width=14, activebackground=self.colours[2])
         widgets.append(outputBox)
         outputBox.place(x=16, y=100)
 
