@@ -90,7 +90,14 @@ class Steg():
         print(output)
         return output
     
-    
+    def foremost(self, path):
+        cmnd = "foremost "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def strings(self, path):
         cmnd = "strings "+path
