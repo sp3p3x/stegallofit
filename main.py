@@ -67,7 +67,17 @@ class Steg():
         cmd = " -C -p" + p + " " +  path
         output = os.system("stegsnow" + cmd)
         print(output)
-        print("_______________________________________\n")
+
+    def steghide(self, path):
+        p = input("Password: ")
+        cmnd = "steghide extract -sf -p" + p + " " +  path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        print(output)
+        return output
 
     def strings(self, path):
         cmnd = "strings "+path
