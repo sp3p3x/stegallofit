@@ -78,6 +78,46 @@ class Steg():
             output = process.stdout
         print(output)
         return output
+    
+    def stegseek(self, path):
+        w = input("wordlist: ")
+        cmnd = "stegseek " + path + " " + w
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        print(output)
+        return output
+    
+    def foremost(self, path):
+        cmnd = "foremost "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
+    
+    def stegoveritas(self, path):
+        f = path.split("/")
+        out_path = input()
+        cmnd = "stegoveritas  "+ path + " -out "+ out_path + "/" + f[-1] + "_extracted"
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
+    
+    def xxd(self, path):
+        cmnd = "xxd "+ path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def strings(self, path):
         cmnd = "strings "+path
