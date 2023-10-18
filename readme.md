@@ -21,7 +21,6 @@ python main.py
 - [ ] steghide
 - [ ] stegseek
 - [ ] foremost
-- [ ] stegsolve
 - [ ] stegoveritas
 - [ ] xxd
 - [ ] spectrogram
