@@ -109,7 +109,6 @@ class Steg():
         binwalkOut = self.binwalk(path)
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
-        pngcheckOut = self.pngcheck(path)
         out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
 
         return out
