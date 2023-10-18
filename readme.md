@@ -15,7 +15,7 @@ python main.py
 - [x] strings
 - [x] stegsnow
 - [x] pngcheck
-- [ ] objdumb
+- [ ] objdump
 - [ ] zsteg
 - [ ] jsteg
 - [ ] steghide
@@ -26,6 +26,5 @@ python main.py
 - [ ] stegoveritas
 
 - [ ] spectrogram
-- [ ] visualiser
 
 - [ ] peepdf
