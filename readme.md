@@ -24,7 +24,7 @@ python main.py
 - [ ] stegdetect
 - [ ] stegsolve
 - [ ] stegoveritas
-
+- [ ] xxd
 - [ ] spectrogram
 - [ ] visualiser
 
