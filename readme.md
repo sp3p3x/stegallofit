@@ -15,14 +15,14 @@ python main.py
 - [x] strings
 - [x] stegsnow
 - [x] pngcheck
+- [x] jsteg
+- [x] xxd
 - [ ] objdump
 - [ ] zsteg
-- [ ] jsteg
 - [ ] steghide
 - [ ] stegseek
 - [ ] foremost
 - [ ] stegoveritas
-- [ ] xxd
 - [ ] spectrogram
 
 - [ ] peepdf
