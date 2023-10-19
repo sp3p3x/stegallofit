@@ -172,12 +172,20 @@ class Steg():
         return out
 
     def audioSteg(self, path):
-        pass
+        binwalkOut = self.binwalk(path)
+        exiftoolOut = self.exiftool(path)
+        stringsOut = self.strings(path)
+        xxdOut = self.xxd(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut}
+
+        return out
 
     def genericSteg(self, path):
+        binwalkOut = self.binwalk(path)
+        exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
-
-        out = {"strings":stringsOut}
+        xxdOut = self.xxd(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut}
 
         return out
 
