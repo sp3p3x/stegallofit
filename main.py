@@ -79,6 +79,7 @@ class Steg():
         return output
     
     def foremost(self, path):
+        # todo: add input extract path and delay for processing
         cmnd = "foremost "+path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
@@ -126,7 +127,7 @@ class Steg():
         return output
 
     def jsteg(self,path):
-        cmnd = "jsteg -reveal " + path + " output"
+        cmnd = "jsteg reveal " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -139,7 +140,8 @@ class Steg():
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
         pngcheckOut = self.pngcheck(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
+        xxdOut = self.xxd(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut, "xxd":xxdOut}
 
         return out
 
@@ -147,7 +149,9 @@ class Steg():
         binwalkOut = self.binwalk(path)
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut}
+        xxdOut = self.xxd(path)
+        jstegOut = self.jsteg(path)
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut, "jsteg":jstegOut}
 
         return out
 
