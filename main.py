@@ -8,17 +8,6 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 
 DEBUG = False
 
-banner = '''
-███████╗████████╗███████╗ ██████╗  █████╗ ██╗     ██╗      ██████╗ ███████╗██╗████████╗
-██╔════╝╚══██╔══╝██╔════╝██╔════╝ ██╔══██╗██║     ██║     ██╔═══██╗██╔════╝██║╚══██╔══╝
-███████╗   ██║   █████╗  ██║  ███╗███████║██║     ██║     ██║   ██║█████╗  ██║   ██║   
-╚════██║   ██║   ██╔══╝  ██║   ██║██╔══██║██║     ██║     ██║   ██║██╔══╝  ██║   ██║   
-███████║   ██║   ███████╗╚██████╔╝██║  ██║███████╗███████╗╚██████╔╝██║     ██║   ██║   
-╚══════╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝   ╚═╝   
-
------------------------Developed & Maintained by @sp3p3x @ask--------------------------
-'''
-
 class CreateToolTip(object):
     def __init__(self, widget, text='widget info'):
         self.widget = widget
@@ -61,10 +50,9 @@ class Steg():
             output = process.stdout
         return output
 
-    def stegsnow(self, path):
-        print("STEGSNOW\n")
-        p = input("Password: ")
-        cmd = " -C -p" + p + " " +  path
+    def stegsnow(self, path, inputData):
+        print(inputData)
+        cmd = " -C -p" + inputData + " " +  path
         output = os.system("stegsnow" + cmd)
         print(output)
 
@@ -159,12 +147,12 @@ class Steg():
         binwalkOut = self.binwalk(path)
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
+        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut}
 
         return out
 
-    def txtSteg(self, path):
-        stegsnowOut = self.stegsnow(path)
+    def txtSteg(self, path, inpData):
+        stegsnowOut = self.stegsnow(path, inpData)
 
         out = {"stegsnow":stegsnowOut}
 
@@ -190,7 +178,6 @@ class Steg():
         return out
 
 class UI():
-
     colours=["#1E2233","#36827F","#F9DB6D"]
 
     def __init__(self):
@@ -201,7 +188,6 @@ class UI():
         self.window.resizable(height=0, width=0)
 
     def mainUI(self):
-
         widgets = []
 
         def destroy():
@@ -241,10 +227,6 @@ class UI():
         widgets.append(banner_label)
         banner_label.place(x=150, y=10)
 
-        credits_label=tk.Label(self.window, text="Developed and maintained by @sp3p3x @ask",font=("Roboto" , 9, 'bold'), bg=self.colours[0], fg=self.colours[2])
-        widgets.append(credits_label)
-        credits_label.place(x=147, y=55)
-
         choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
         widgets.append(choose_file_button)
         choose_file_button.place(x=110, y=460)
@@ -265,7 +247,6 @@ class UI():
         widgets.append(DnD_label)
         DnD_label.place(x=250, y=300)
 
-
         # DnD_icon=tk.Label(self.window, bg=self.colours[0])
         # DnD_icon.place(x=252, y=210)
 
@@ -281,6 +262,48 @@ class UI():
 
         CreateToolTip(DnD_label,"Drop the files here!")
 
+    def inputUI(self, path, reqInputs):
+        widgets = []
+        inputCount = 0
+        userInput = {}
+        
+        def destroy():
+            for widget in widgets:
+                widget.place_forget()
+
+        def nextUI():
+            destroy()
+            print(userInput)
+            self.ouputUI(path)
+
+        def nextInput():
+            nonlocal inputCount
+            inp = inputBox.get(1.0, "end-1c")
+            userInput[reqInputs[inputCount-1]] = inp
+            inputCount += 1
+            inputBox.delete(1.0, END)
+            if inputCount == len(reqInputs):
+                if DEBUG:
+                    print(userInput)
+                nextUI()
+
+        def skipInput():
+            print(reqInputs)
+            pass 
+    
+        inputBox = tk.Text(self.window, bg=self.colours[0], fg=self.colours[2], bd=2, height=5, width=60, font=("Roboto" , 10, 'bold'), padx=10, pady=5)
+        widgets.append(inputBox)
+        inputBox.place(x=16, y=250)
+
+        skipButton=tk.Button(self.window,command=lambda: skipInput(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="SKIP", font=("Roboto" , 10, 'bold'))
+        skipButton.place(x=30, y=370)
+        widgets.append(skipButton)
+
+        nextButton=tk.Button(self.window,command=lambda: nextInput(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
+        nextButton.place(x=200, y=370)
+        widgets.append(nextButton)
+
+        return userInput
 
     def ouputUI(self, inpFilePath):
 
@@ -296,7 +319,7 @@ class UI():
 
         def modifyText(newText):
             outputBox.config(state=NORMAL)
-            outputBox.delete('1.0',END)
+            outputBox.delete(1.0,END)
             outputBox.insert(END, newText)
             outputBox.config(state=DISABLED)
 
@@ -314,7 +337,8 @@ class UI():
                 elif inpFilePath.rstrip('"').endswith('.txt'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
-                    outData = steg.txtSteg(inpFilePath)    
+                    inputData = self.inputUI(["stegsnow"])
+                    outData = steg.txtSteg(inpFilePath, inputData)    
                 elif inpFilePath.rstrip('"').endswith('.wav') or inpFilePath.endswith('.mp3'):
                     if DEBUG:
                         print("Input file path: " + inpFilePath + "\n")
