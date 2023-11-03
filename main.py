@@ -5,8 +5,9 @@ from tkinter import ttk
 from tkinter import filedialog
 import tkinter.scrolledtext as scrolledtext
 from tkinterdnd2 import TkinterDnD, DND_FILES
+import string
 
-DEBUG = False
+DEBUG = True
 
 class CreateToolTip(object):
     def __init__(self, widget, text='widget info'):
@@ -118,13 +119,29 @@ class Steg():
         return output
 
     def strings(self, path):
-        cmnd = "strings "+path
-        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
-        if process.stdout == "":
-            output = process.stderr
-        else:
-            output = process.stdout
-        return output
+        with open(path,errors="ignore") as file:
+            data = ""
+            for i in file.read():
+                if i in string.printable:
+                    data += i
+                    continue
+                if len(data) >= min:
+                    yield data
+                data = ""
+            if len(data) >= min: 
+                yield data
+
+        # for str in strings(path):       to be added to print the output
+        #     print(str)             
+
+
+        # cmnd = "strings "+path
+        # process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        # if process.stdout == "":
+        #     output = process.stderr
+        # else:
+        #     output = process.stdout
+        # return output
 
     def pngcheck(self,path):
         cmnd = "pngcheck -v "+path
