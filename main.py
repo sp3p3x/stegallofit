@@ -9,6 +9,12 @@ import string
 
 DEBUG = True
 
+def debug(text):
+    if text == "b":
+        input()  
+    elif DEBUG:
+        print(text)
+
 class CreateToolTip(object):
     def __init__(self, widget, text='widget info'):
         self.widget = widget
@@ -52,10 +58,9 @@ class Steg():
         return output
 
     def stegsnow(self, path, inputData):
-        print(inputData)
-        cmd = " -C -p" + inputData + " " +  path
+        cmd = " -C -p" + inputData["stegsnow"] + " " +  path
         output = os.system("stegsnow" + cmd)
-        print(output)
+        return output
 
     def steghide(self, path):
         p = input("Password: ")
@@ -119,29 +124,12 @@ class Steg():
         return output
 
     def strings(self, path):
-        with open(path,errors="ignore") as file:
-            data = ""
+        data = ""
+        with open(path.strip('"'), 'rb') as file:
             for i in file.read():
-                if i in string.printable:
-                    data += i
-                    continue
-                if len(data) >= min:
-                    yield data
-                data = ""
-            if len(data) >= min: 
-                yield data
-
-        # for str in strings(path):       to be added to print the output
-        #     print(str)             
-
-
-        # cmnd = "strings "+path
-        # process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
-        # if process.stdout == "":
-        #     output = process.stderr
-        # else:
-        #     output = process.stdout
-        # return output
+                if chr(i) in string:
+                    data += chr(i)
+        return data
 
     def pngcheck(self,path):
         cmnd = "pngcheck -v "+path
@@ -245,8 +233,7 @@ class UI():
                 destroy()
                 self.ouputUI(inpFilePath)
             except Exception as err:
-                if DEBUG:
-                    print(err)
+                debug(err)
 
         listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=55, borderwidth=5)
 
@@ -300,7 +287,8 @@ class UI():
 
         CreateToolTip(DnD_label,"Drop the files here!")
 
-    def inputUI(self, path, reqInputs):
+    def inputUI(self, reqInputs):
+        # self.canvas = Canvas(self.master)
         widgets = []
         inputCount = 0
         userInput = {}
@@ -312,7 +300,6 @@ class UI():
         def nextUI():
             destroy()
             print(userInput)
-            self.ouputUI(path)
 
         def nextInput():
             nonlocal inputCount
@@ -321,8 +308,7 @@ class UI():
             inputCount += 1
             inputBox.delete(1.0, END)
             if inputCount == len(reqInputs):
-                if DEBUG:
-                    print(userInput)
+                debug(userInput)
                 nextUI()
 
         def skipInput():
@@ -344,7 +330,6 @@ class UI():
         return userInput
 
     def ouputUI(self, inpFilePath):
-
         widgets = []
 
         def destroy():
@@ -365,32 +350,27 @@ class UI():
             try:
                 steg = Steg()
                 if inpFilePath.rstrip('"').endswith('.png'):
-                    if DEBUG:
-                        print("Input file path: " + inpFilePath + "\n")
+                    debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.pngSteg(inpFilePath)
                 elif inpFilePath.rstrip('"').endswith('.jpg') or inpFilePath.endswith('.jpeg'):
-                    if DEBUG:
-                        print("Input file path: " + inpFilePath + "\n")
+                    debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.jpgSteg(inpFilePath)
                 elif inpFilePath.rstrip('"').endswith('.txt'):
-                    if DEBUG:
-                        print("Input file path: " + inpFilePath + "\n")
-                    inputData = self.inputUI(["stegsnow"])
-                    outData = steg.txtSteg(inpFilePath, inputData)    
+                    debug("Input file path: " + inpFilePath + "\n")
+                    # inputData = self.inputUI(["stegsnow"])
+                    inputData = {"stegsnow":"foo"}
+                    outData = steg.txtSteg(inpFilePath, inputData)   
                 elif inpFilePath.rstrip('"').endswith('.wav') or inpFilePath.endswith('.mp3'):
-                    if DEBUG:
-                        print("Input file path: " + inpFilePath + "\n")
+                    debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.audioSteg(inpFilePath)
                 else:
-                    if DEBUG:
-                        print("Input file path: " + inpFilePath + "\n")
+                    debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.genericSteg(inpFilePath)
 
                 return outData
 
             except Exception as err:
-                if DEBUG:
-                    print(err)
+                debug(err)
 
         outData = classify()
         outDataKeys = [string.upper() for string in list(outData.keys())]
