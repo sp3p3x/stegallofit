@@ -124,12 +124,13 @@ class Steg():
         return output
 
     def strings(self, path):
-        data = ""
-        with open(path.strip('"'), 'rb') as file:
-            for i in file.read():
-                if chr(i) in string:
-                    data += chr(i)
-        return data
+        cmnd = "strings "+path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
 
     def pngcheck(self,path):
         cmnd = "pngcheck -v "+path
