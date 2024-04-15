@@ -1,11 +1,10 @@
-import os, subprocess
+import subprocess
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import tkinter.scrolledtext as scrolledtext
 from tkinterdnd2 import TkinterDnD, DND_FILES
-import string
 
 DEBUG = True
 
@@ -170,6 +169,31 @@ class Steg:
         else:
             output = process.stdout
         return output
+
+    def peepdf(self, path):
+        cmnd = "peepdf -f " + path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        if process.stdout == "":
+            output = process.stderr
+        else:
+            output = process.stdout
+        return output
+
+    def pdfSteg(self, path):
+        peepdfOut = self.peepdf(path)
+        binwalkOut = self.binwalk(path)
+        exiftoolOut = self.exiftool(path)
+        stringsOut = self.strings(path)
+        xxdOut = self.xxd(path)
+        out = {
+            "peepdf": peepdfOut,
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "xxd": xxdOut,
+        }
+
+        return out
 
     def pngSteg(self, path):
         binwalkOut = self.binwalk(path)
@@ -549,6 +573,9 @@ class UI:
                 ):
                     debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.audioSteg(inpFilePath)
+                elif inpFilePath.rstrip('"').endswith(".pdf"):
+                    debug("Input file path: " + inpFilePath + "\n")
+                    outData = steg.pdfSteg(inpFilePath)
                 else:
                     debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.genericSteg(inpFilePath)
