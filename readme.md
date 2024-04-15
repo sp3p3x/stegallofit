@@ -28,7 +28,7 @@ All contributions are welcome and will be a huge help to the development of this
 3) Create a pull request
 ```
 
-### TODO:
+### Available Tools:
 
 - [x] binwalk
 - [x] exiftool
@@ -39,9 +39,9 @@ All contributions are welcome and will be a huge help to the development of this
 - [x] xxd
 - [x] zsteg
 - [x] foremost
+- [x] stegseek
+- [x] steghide
+- [x] stegoveritas
 - [ ] objdump
-- [ ] steghide
-- [ ] stegseek
-- [ ] stegoveritas
 - [ ] spectrogram
 - [ ] peepdf
