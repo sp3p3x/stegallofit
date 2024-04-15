@@ -9,14 +9,18 @@ import string
 
 DEBUG = True
 
+userInput = {}
+
+
 def debug(text):
     if text == "b":
-        input()  
+        input()
     elif DEBUG:
         print(text)
 
+
 class CreateToolTip(object):
-    def __init__(self, widget, text='widget info'):
+    def __init__(self, widget, text="widget info"):
         self.widget = widget
         self.text = text
         self.widget.bind("<Enter>", self.enter)
@@ -30,17 +34,28 @@ class CreateToolTip(object):
         self.tw = tk.Toplevel(self.widget)
         self.tw.wm_overrideredirect(True)
         self.tw.wm_geometry("+%d+%d" % (x, y))
-        label = tk.Label(self.tw, text=self.text, justify='left', background='yellow', relief='solid', borderwidth=1, font=("times", "8", "normal"))
+        label = tk.Label(
+            self.tw,
+            text=self.text,
+            justify="left",
+            background="yellow",
+            relief="solid",
+            borderwidth=1,
+            font=("times", "8", "normal"),
+        )
         label.pack(ipadx=1)
 
     def close(self, event=None):
         if self.tw:
             self.tw.destroy()
 
-class Steg():
+
+class Steg:
+
+    global userInput
 
     def binwalk(self, path):
-        cmnd = "binwalk "+path
+        cmnd = "binwalk " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -49,7 +64,7 @@ class Steg():
         return output
 
     def exiftool(self, path):
-        cmnd = "exiftool "+path
+        cmnd = "exiftool " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -57,14 +72,14 @@ class Steg():
             output = process.stdout
         return output
 
-    def stegsnow(self, path, inputData):
-        cmd = " -C -p" + inputData["stegsnow"] + " " +  path
+    def stegsnow(self, path):
+        cmd = " -C -p" + userInput["stegsnow"] + " " + path
         output = os.system("stegsnow" + cmd)
         return output
 
     def steghide(self, path):
         p = input("Password: ")
-        cmnd = "steghide extract -sf -p" + p + " " +  path
+        cmnd = "steghide extract -sf -p" + p + " " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -72,7 +87,7 @@ class Steg():
             output = process.stdout
         print(output)
         return output
-    
+
     def stegseek(self, path):
         w = input("wordlist: ")
         cmnd = "stegseek " + path + " " + w
@@ -83,39 +98,41 @@ class Steg():
             output = process.stdout
         print(output)
         return output
-    
+
     def foremost(self, path):
         # todo: add input extract path and delay for processing
-        cmnd = "foremost "+path
+        cmnd = "foremost " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
         else:
             output = process.stdout
         return output
-    
+
     def stegoveritas(self, path):
         f = path.split("/")
         out_path = input()
-        cmnd = "stegoveritas  "+ path + " -out "+ out_path + "/" + f[-1] + "_extracted"
+        cmnd = (
+            "stegoveritas  " + path + " -out " + out_path + "/" + f[-1] + "_extracted"
+        )
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
         else:
             output = process.stdout
         return output
-    
+
     def xxd(self, path):
-        cmnd = "xxd "+ path
+        cmnd = "xxd " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
         else:
             output = process.stdout
         return output
-    
+
     def zsteg(self, path):
-        cmnd = "zsteg -a "+ path
+        cmnd = "zsteg -a " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -124,7 +141,7 @@ class Steg():
         return output
 
     def strings(self, path):
-        cmnd = "strings "+path
+        cmnd = "strings " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -132,8 +149,8 @@ class Steg():
             output = process.stdout
         return output
 
-    def pngcheck(self,path):
-        cmnd = "pngcheck -v "+path
+    def pngcheck(self, path):
+        cmnd = "pngcheck -v " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -141,7 +158,7 @@ class Steg():
             output = process.stdout
         return output
 
-    def jsteg(self,path):
+    def jsteg(self, path):
         cmnd = "jsteg reveal " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
@@ -156,7 +173,13 @@ class Steg():
         stringsOut = self.strings(path)
         pngcheckOut = self.pngcheck(path)
         xxdOut = self.xxd(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut, "xxd":xxdOut}
+        out = {
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "pngcheck": pngcheckOut,
+            "xxd": xxdOut,
+        }
 
         return out
 
@@ -166,14 +189,20 @@ class Steg():
         stringsOut = self.strings(path)
         xxdOut = self.xxd(path)
         jstegOut = self.jsteg(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut, "jsteg":jstegOut}
+        out = {
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "xxd": xxdOut,
+            "jsteg": jstegOut,
+        }
 
         return out
 
-    def txtSteg(self, path, inpData):
-        stegsnowOut = self.stegsnow(path, inpData)
+    def txtSteg(self, path):
+        stegsnowOut = self.stegsnow(path)
 
-        out = {"stegsnow":stegsnowOut}
+        out = {"stegsnow": stegsnowOut}
 
         return out
 
@@ -182,7 +211,12 @@ class Steg():
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
         pngcheckOut = self.pngcheck(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "pngcheck":pngcheckOut}
+        out = {
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "pngcheck": pngcheckOut,
+        }
 
         return out
 
@@ -191,7 +225,12 @@ class Steg():
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
         xxdOut = self.xxd(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut}
+        out = {
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "xxd": xxdOut,
+        }
 
         return out
 
@@ -200,15 +239,21 @@ class Steg():
         exiftoolOut = self.exiftool(path)
         stringsOut = self.strings(path)
         xxdOut = self.xxd(path)
-        out = {"binwalk":binwalkOut, "exiftool":exiftoolOut, "strings":stringsOut, "xxd":xxdOut}
+        out = {
+            "binwalk": binwalkOut,
+            "exiftool": exiftoolOut,
+            "strings": stringsOut,
+            "xxd": xxdOut,
+        }
 
         return out
 
-class UI():
-    colours=["#1E2233","#36827F","#F9DB6D"]
+
+class UI:
+    colours = ["#1E2233", "#36827F", "#F9DB6D"]
 
     def __init__(self):
-        self.window=TkinterDnD.Tk()
+        self.window = TkinterDnD.Tk()
         self.window.geometry("600x600")
         self.window.title("stegallofit")
         self.window.configure(bg=self.colours[0])
@@ -225,18 +270,37 @@ class UI():
             listb.insert("end", event.data)
 
         def choose_file():
-            self.window.filename = filedialog.askopenfilename(initialdir="Documents", title="Select file", filetypes=[("select png files","*.png")])
+            self.window.filename = filedialog.askopenfilename(
+                initialdir="Documents",
+                title="Select file",
+                filetypes=[("Select any file", "*")],
+            )
             listb.insert("end", self.window.filename)
 
         def nextUI():
             try:
-                inpFilePath = '"' + listb.get(listb.curselection()).rstrip('}').lstrip('{') + '"'
+                inpFilePath = (
+                    '"' + listb.get(listb.curselection()).rstrip("}").lstrip("{") + '"'
+                )
                 destroy()
-                self.ouputUI(inpFilePath)
+                extension = inpFilePath.split(".")[-1].rstrip('"')
+                if extension == "txt":
+                    self.inputUI(inpFilePath, ["stegsnow"])
+                else:
+                    self.ouputUI(inpFilePath)
             except Exception as err:
                 debug(err)
 
-        listb=tk.Listbox(self.window, selectmode=tk.SINGLE, bg=self.colours[0], fg=self.colours[2], font=("Roboto" , 10, 'bold'), height=23, width=55, borderwidth=5)
+        listb = tk.Listbox(
+            self.window,
+            selectmode=tk.SINGLE,
+            bg=self.colours[0],
+            fg=self.colours[2],
+            font=("Roboto", 10, "bold"),
+            height=23,
+            width=55,
+            borderwidth=5,
+        )
 
         def clear():
             selection = listb.curselection()
@@ -246,30 +310,73 @@ class UI():
                 pass
 
         def clearAll():
-            list_size=listb.size()
+            list_size = listb.size()
             listb.delete(0, list_size)
 
-        banner_label=tk.Label(self.window, text="STEGALLOFIT",font=("Roboto" , 30, 'bold'), bg=self.colours[0], fg=self.colours[2])
+        banner_label = tk.Label(
+            self.window,
+            text="STEGALLOFIT",
+            font=("Roboto", 30, "bold"),
+            bg=self.colours[0],
+            fg=self.colours[2],
+        )
         widgets.append(banner_label)
         banner_label.place(x=150, y=10)
 
-        choose_file_button=tk.Button(self.window,command=lambda: choose_file(), text="CHOOSE FILE",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        choose_file_button = tk.Button(
+            self.window,
+            command=lambda: choose_file(),
+            text="CHOOSE FILE",
+            font=("Roboto", 10, "bold"),
+            bg=self.colours[1],
+            activebackground=self.colours[2],
+        )
         widgets.append(choose_file_button)
         choose_file_button.place(x=110, y=460)
 
-        clear_button=tk.Button(self.window,command=lambda: clear(), text="CLEAR",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        clear_button = tk.Button(
+            self.window,
+            command=lambda: clear(),
+            text="CLEAR",
+            font=("Roboto", 10, "bold"),
+            bg=self.colours[1],
+            activebackground=self.colours[2],
+        )
         widgets.append(clear_button)
         clear_button.place(x=260, y=460)
 
-        clear_all_button=tk.Button(self.window,command=lambda: clearAll(), text="CLEAR ALL",font=("Roboto" , 10, 'bold') , bg=self.colours[1], activebackground=self.colours[2])
+        clear_all_button = tk.Button(
+            self.window,
+            command=lambda: clearAll(),
+            text="CLEAR ALL",
+            font=("Roboto", 10, "bold"),
+            bg=self.colours[1],
+            activebackground=self.colours[2],
+        )
         widgets.append(clear_all_button)
         clear_all_button.place(x=360, y=460)
 
-        next_button=tk.Button(self.window,command=lambda: nextUI(), height=2, width=9, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
+        next_button = tk.Button(
+            self.window,
+            command=lambda: nextUI(),
+            height=2,
+            width=9,
+            bg=self.colours[0],
+            fg=self.colours[1],
+            activebackground=self.colours[2],
+            text="NEXT",
+            font=("Roboto", 10, "bold"),
+        )
         widgets.append(next_button)
         next_button.place(x=240, y=530)
 
-        DnD_label=tk.Label(self.window, text="DROP THE FILE",font=("Roboto" , 8, 'bold'), bg=self.colours[0], fg=self.colours[1])
+        DnD_label = tk.Label(
+            self.window,
+            text="DROP THE FILE",
+            font=("Roboto", 8, "bold"),
+            bg=self.colours[0],
+            fg=self.colours[1],
+        )
         widgets.append(DnD_label)
         DnD_label.place(x=250, y=300)
 
@@ -286,26 +393,27 @@ class UI():
 
         # todo: add dnd hook to label
 
-        CreateToolTip(DnD_label,"Drop the files here!")
+        CreateToolTip(DnD_label, "Drop the files here!")
 
-    def inputUI(self, reqInputs):
+    def inputUI(self, filePath, reqInputs):
         # self.canvas = Canvas(self.master)
         widgets = []
         inputCount = 0
-        userInput = {}
-        
+        global userInput
+
         def destroy():
             for widget in widgets:
                 widget.place_forget()
 
         def nextUI():
+            debug("Inputs: ", userInput)
             destroy()
-            print(userInput)
+            self.ouputUI(filePath)
 
         def nextInput():
             nonlocal inputCount
             inp = inputBox.get(1.0, "end-1c")
-            userInput[reqInputs[inputCount-1]] = inp
+            userInput[reqInputs[inputCount - 1]] = inp
             inputCount += 1
             inputBox.delete(1.0, END)
             if inputCount == len(reqInputs):
@@ -313,24 +421,56 @@ class UI():
                 nextUI()
 
         def skipInput():
+            # todo: skip input
             print(reqInputs)
-            pass 
-    
-        inputBox = tk.Text(self.window, bg=self.colours[0], fg=self.colours[2], bd=2, height=5, width=60, font=("Roboto" , 10, 'bold'), padx=10, pady=5)
+            pass
+
+        inputBox = tk.Text(
+            self.window,
+            bg=self.colours[0],
+            fg=self.colours[2],
+            bd=2,
+            height=5,
+            width=60,
+            font=("Roboto", 10, "bold"),
+            padx=10,
+            pady=5,
+        )
         widgets.append(inputBox)
         inputBox.place(x=16, y=250)
 
-        skipButton=tk.Button(self.window,command=lambda: skipInput(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="SKIP", font=("Roboto" , 10, 'bold'))
+        skipButton = tk.Button(
+            self.window,
+            command=lambda: skipInput(),
+            height=1,
+            width=8,
+            bg=self.colours[0],
+            fg=self.colours[1],
+            activebackground=self.colours[2],
+            text="SKIP",
+            font=("Roboto", 10, "bold"),
+        )
         skipButton.place(x=30, y=370)
         widgets.append(skipButton)
 
-        nextButton=tk.Button(self.window,command=lambda: nextInput(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="NEXT", font=("Roboto" , 10, 'bold'))
+        nextButton = tk.Button(
+            self.window,
+            command=lambda: nextInput(),
+            height=1,
+            width=8,
+            bg=self.colours[0],
+            fg=self.colours[1],
+            activebackground=self.colours[2],
+            text="NEXT",
+            font=("Roboto", 10, "bold"),
+        )
         nextButton.place(x=200, y=370)
         widgets.append(nextButton)
 
         return userInput
 
     def ouputUI(self, inpFilePath):
+        global userInput
         widgets = []
 
         def destroy():
@@ -343,25 +483,27 @@ class UI():
 
         def modifyText(newText):
             outputBox.config(state=NORMAL)
-            outputBox.delete(1.0,END)
+            outputBox.delete(1.0, END)
             outputBox.insert(END, newText)
             outputBox.config(state=DISABLED)
 
         def classify():
             try:
                 steg = Steg()
-                if inpFilePath.rstrip('"').endswith('.png'):
+                if inpFilePath.rstrip('"').endswith(".png"):
                     debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.pngSteg(inpFilePath)
-                elif inpFilePath.rstrip('"').endswith('.jpg') or inpFilePath.endswith('.jpeg'):
+                elif inpFilePath.rstrip('"').endswith(".jpg") or inpFilePath.endswith(
+                    ".jpeg"
+                ):
                     debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.jpgSteg(inpFilePath)
-                elif inpFilePath.rstrip('"').endswith('.txt'):
+                elif inpFilePath.rstrip('"').endswith(".txt"):
                     debug("Input file path: " + inpFilePath + "\n")
-                    # inputData = self.inputUI(["stegsnow"])
-                    inputData = {"stegsnow":"foo"}
-                    outData = steg.txtSteg(inpFilePath, inputData)   
-                elif inpFilePath.rstrip('"').endswith('.wav') or inpFilePath.endswith('.mp3'):
+                    outData = steg.txtSteg(inpFilePath)
+                elif inpFilePath.rstrip('"').endswith(".wav") or inpFilePath.endswith(
+                    ".mp3"
+                ):
                     debug("Input file path: " + inpFilePath + "\n")
                     outData = steg.audioSteg(inpFilePath)
                 else:
@@ -383,8 +525,24 @@ class UI():
             toolName = selectedTool.get().lower()
             modifyText(outData[toolName])
 
-        outputBox = scrolledtext.ScrolledText(self.window,  state=DISABLED, bg=self.colours[0], fg=self.colours[2], bd=2, height=25, width=66, font=("Roboto" , 9, 'bold'), padx=10, pady=5)
-        outputBox.vbar.config(troughcolor = self.colours[0], background=self.colours[1], width=14, activebackground=self.colours[2])
+        outputBox = scrolledtext.ScrolledText(
+            self.window,
+            state=DISABLED,
+            bg=self.colours[0],
+            fg=self.colours[2],
+            bd=2,
+            height=25,
+            width=66,
+            font=("Roboto", 9, "bold"),
+            padx=10,
+            pady=5,
+        )
+        outputBox.vbar.config(
+            troughcolor=self.colours[0],
+            background=self.colours[1],
+            width=14,
+            activebackground=self.colours[2],
+        )
         widgets.append(outputBox)
         outputBox.place(x=16, y=100)
 
@@ -393,39 +551,56 @@ class UI():
 
         dropdownStyle = ttk.Style()
 
-        self.window.option_add('*TCombobox*Listbox*Background', self.colours[0])
-        self.window.option_add('*TCombobox*Listbox*Foreground', self.colours[2])
-        self.window.option_add('*TCombobox*Listbox*selectBackground', self.colours[1])
-        self.window.option_add('*TCombobox*Listbox*selectForeground', self.colours[2])
-        dropdownStyle.map('TCombobox', fieldbackground=[('readonly', self.colours[0])])
-        dropdownStyle.map('TCombobox', selectbackground=[('readonly', self.colours[0])])
-        dropdownStyle.map('TCombobox', selectforeground=[('readonly', self.colours[2])])
-        dropdownStyle.map('TCombobox', background=[('readonly', self.colours[0])])
-        dropdownStyle.map('TCombobox', foreground=[('readonly', self.colours[2])])
+        self.window.option_add("*TCombobox*Listbox*Background", self.colours[0])
+        self.window.option_add("*TCombobox*Listbox*Foreground", self.colours[2])
+        self.window.option_add("*TCombobox*Listbox*selectBackground", self.colours[1])
+        self.window.option_add("*TCombobox*Listbox*selectForeground", self.colours[2])
+        dropdownStyle.map("TCombobox", fieldbackground=[("readonly", self.colours[0])])
+        dropdownStyle.map("TCombobox", selectbackground=[("readonly", self.colours[0])])
+        dropdownStyle.map("TCombobox", selectforeground=[("readonly", self.colours[2])])
+        dropdownStyle.map("TCombobox", background=[("readonly", self.colours[0])])
+        dropdownStyle.map("TCombobox", foreground=[("readonly", self.colours[2])])
 
-        toolNameDropdown = ttk.Combobox(self.window, textvariable=selectedTool, justify='center')
-        toolNameDropdown['values']=outDataKeys
-        toolNameDropdown.configure(font=("Roboto" , 12, 'bold'), state="readonly")
-        toolNameDropdown.bind("<<ComboboxSelected>>", lambda e: toolNameDropdown.selection_clear())
-        
+        toolNameDropdown = ttk.Combobox(
+            self.window, textvariable=selectedTool, justify="center"
+        )
+        toolNameDropdown["values"] = outDataKeys
+        toolNameDropdown.configure(font=("Roboto", 12, "bold"), state="readonly")
+        toolNameDropdown.bind(
+            "<<ComboboxSelected>>", lambda e: toolNameDropdown.selection_clear()
+        )
+
         widgets.append(toolNameDropdown)
         toolNameDropdown.place(x=170, y=530)
 
-        selectedTool.trace('w', changeTool)
+        selectedTool.trace("w", changeTool)
 
         initOut()
 
-        back_button=tk.Button(self.window,command=lambda: nextUI(), height=1, width=8, bg=self.colours[0], fg=self.colours[1], activebackground=self.colours[2], text="BACK", font=("Roboto" , 10, 'bold'))
+        back_button = tk.Button(
+            self.window,
+            command=lambda: nextUI(),
+            height=1,
+            width=8,
+            bg=self.colours[0],
+            fg=self.colours[1],
+            activebackground=self.colours[2],
+            text="BACK",
+            font=("Roboto", 10, "bold"),
+        )
         widgets.append(back_button)
         back_button.place(x=20, y=30)
 
     def run(self):
         self.mainUI()
+        # self.inputUI(["pass", "foo", "bar"])
         self.window.mainloop()
+
 
 def main():
     ui = UI()
     ui.run()
+
 
 if __name__ == "__main__":
     main()
