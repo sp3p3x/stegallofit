@@ -41,4 +41,4 @@ All contributions are welcome and will be a huge help to the development of this
 - [x] steghide
 - [x] stegoveritas
 - [x] peepdf
-- [ ] spectrogram
+- [x] spectrogram
