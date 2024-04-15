@@ -1,1 +1,4 @@
 tkinterdnd2
+peepdf-3
+STPyV8
+pylibemu
