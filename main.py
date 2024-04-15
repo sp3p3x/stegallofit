@@ -5,6 +5,8 @@ from tkinter import ttk
 from tkinter import filedialog
 import tkinter.scrolledtext as scrolledtext
 from tkinterdnd2 import TkinterDnD, DND_FILES
+import matplotlib.pyplot as plt
+from scipy.io import wavfile
 
 DEBUG = True
 
@@ -178,6 +180,16 @@ class Steg:
         else:
             output = process.stdout
         return output
+
+    def spectrogram(self, path):
+        outputPath = userInput["spectrogram"]
+        samplingFrequency, signalData = wavfile.read(path)
+        Pxx, freqs, bins, im = plt.specgram(signalData, Fs=samplingFrequency, NFFT=512)
+        plt.title("Spectrogram")
+        plt.xlabel("Time")
+        plt.ylabel("Frequency")
+        plt.autoscale()
+        plt.savefig(outputPath, bbox_inches="tight")
 
     def pdfSteg(self, path):
         peepdfOut = self.peepdf(path)
