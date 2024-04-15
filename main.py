@@ -73,24 +73,28 @@ class Steg:
         return output
 
     def stegsnow(self, path):
-        cmd = " -C -p" + userInput["stegsnow"] + " " + path
-        output = os.system("stegsnow" + cmd)
+        password = userInput["stegsnow"]
+        if password != "":
+            cmnd = " -C -p" + password + " " + path
+        else:
+            cmnd = " -C " + path
+        process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
+        output = process.stdout
         return output
 
     def steghide(self, path):
-        p = input("Password: ")
-        cmnd = "steghide extract -sf -p" + p + " " + path
+        password = userInput["steghide"]
+        cmnd = "steghide extract -sf -p" + password + " " + path
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
         else:
             output = process.stdout
-        print(output)
         return output
 
     def stegseek(self, path):
-        w = input("wordlist: ")
-        cmnd = "stegseek " + path + " " + w
+        wordlistPath = userInput["stegseek"]
+        cmnd = "stegseek " + path + " " + wordlistPath
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -100,8 +104,8 @@ class Steg:
         return output
 
     def foremost(self, path):
-        # todo: add input extract path and delay for processing
-        cmnd = "foremost " + path
+        outputPath = userInput["foremost"]
+        cmnd = "foremost -T " + path + " -o " + outputPath
         process = subprocess.run([cmnd], capture_output=True, text=True, shell=True)
         if process.stdout == "":
             output = process.stderr
@@ -111,7 +115,7 @@ class Steg:
 
     def stegoveritas(self, path):
         f = path.split("/")
-        out_path = input()
+        out_path = userInput["stegoveritas"]
         cmnd = (
             "stegoveritas  " + path + " -out " + out_path + "/" + f[-1] + "_extracted"
         )
@@ -287,7 +291,7 @@ class UI:
                 if extension == "txt":
                     self.inputUI(inpFilePath, ["stegsnow"])
                 else:
-                    self.ouputUI(inpFilePath)
+                    self.outputUI(inpFilePath)
             except Exception as err:
                 debug(err)
 
@@ -396,7 +400,6 @@ class UI:
         CreateToolTip(DnD_label, "Drop the files here!")
 
     def inputUI(self, filePath, reqInputs):
-        # self.canvas = Canvas(self.master)
         widgets = []
         inputCount = 0
         global userInput
@@ -406,9 +409,17 @@ class UI:
                 widget.place_forget()
 
         def nextUI():
-            debug("Inputs: ", userInput)
+            debug(f"Inputs: {userInput}")
             destroy()
-            self.ouputUI(filePath)
+            self.outputUI(filePath)
+
+        def prevUI():
+            destroy()
+            self.mainUI()
+
+        def refreshLabel():
+            inputLabel.config(text=f"INPUT: {reqInputs[inputCount - 1]}")
+            inputLabel.update()
 
         def nextInput():
             nonlocal inputCount
@@ -419,11 +430,29 @@ class UI:
             if inputCount == len(reqInputs):
                 debug(userInput)
                 nextUI()
+            # else:
+            #     refreshLabel()
 
         def skipInput():
-            # todo: skip input
-            print(reqInputs)
-            pass
+            nonlocal inputCount
+            userInput[reqInputs[inputCount - 1]] = ""
+            inputCount += 1
+            inputBox.delete(1.0, END)
+            if inputCount == len(reqInputs):
+                debug(userInput)
+                nextUI()
+            # else:
+            #     refreshLabel()
+
+        inputLabel = tk.Label(
+            self.window,
+            text=f"INPUT: {reqInputs[0]}",
+            font=("Roboto", 23, "bold"),
+            bg=self.colours[0],
+            fg=self.colours[2],
+        )
+        widgets.append(inputLabel)
+        inputLabel.place(x=120, y=140)
 
         inputBox = tk.Text(
             self.window,
@@ -437,7 +466,7 @@ class UI:
             pady=5,
         )
         widgets.append(inputBox)
-        inputBox.place(x=16, y=250)
+        inputBox.place(x=16, y=230)
 
         skipButton = tk.Button(
             self.window,
@@ -448,9 +477,9 @@ class UI:
             fg=self.colours[1],
             activebackground=self.colours[2],
             text="SKIP",
-            font=("Roboto", 10, "bold"),
+            font=("Roboto", 15, "bold"),
         )
-        skipButton.place(x=30, y=370)
+        skipButton.place(x=140, y=390)
         widgets.append(skipButton)
 
         nextButton = tk.Button(
@@ -462,14 +491,28 @@ class UI:
             fg=self.colours[1],
             activebackground=self.colours[2],
             text="NEXT",
+            font=("Roboto", 15, "bold"),
+        )
+        nextButton.place(x=310, y=390)
+        widgets.append(nextButton)
+
+        back_button = tk.Button(
+            self.window,
+            command=lambda: prevUI(),
+            height=1,
+            width=8,
+            bg=self.colours[0],
+            fg=self.colours[1],
+            activebackground=self.colours[2],
+            text="BACK",
             font=("Roboto", 10, "bold"),
         )
-        nextButton.place(x=200, y=370)
-        widgets.append(nextButton)
+        widgets.append(back_button)
+        back_button.place(x=20, y=30)
 
         return userInput
 
-    def ouputUI(self, inpFilePath):
+    def outputUI(self, inpFilePath):
         global userInput
         widgets = []
 
@@ -593,7 +636,6 @@ class UI:
 
     def run(self):
         self.mainUI()
-        # self.inputUI(["pass", "foo", "bar"])
         self.window.mainloop()
 
 
