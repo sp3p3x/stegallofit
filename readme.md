@@ -4,9 +4,7 @@ A GUI tool that makes steg analysis easy by putting all the tools in one place.
 
 ## Installation:
 
-As of yet, this tool is only supported on linux since the commands that are used to do the analysis is only available on linux.
-
-Windows and Mac support is being worked on and will be available really soon.
+**NOTE**: This tool is only supported on linux since the commands that are used to do the analysis are only available on linux.
 
 ```bash
 pip install -r requirements.txt
@@ -15,7 +13,7 @@ pip install -r requirements.txt
 ## Usage:
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 ## How to Contribute:
