@@ -37,11 +37,11 @@ All contributions are welcome and will be a huge help to the development of this
 - [x] pngcheck
 - [x] jsteg
 - [x] xxd
+- [x] zsteg
+- [x] foremost
 - [ ] objdump
-- [ ] zsteg
 - [ ] steghide
 - [ ] stegseek
-- [ ] foremost
 - [ ] stegoveritas
 - [ ] spectrogram
 - [ ] peepdf
